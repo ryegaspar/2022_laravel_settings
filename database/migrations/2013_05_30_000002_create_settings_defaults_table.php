@@ -15,7 +15,7 @@ return new class extends Migration {
 	{
 		Schema::create('settings_defaults', function (Blueprint $table) {
 			$table->id();
-			$table->foreignId('account_type_id');
+			$table->foreignId('account_type_id')->constrained();
 			$table->string('name');
 			$table->enum('type', [
 				'array',
