@@ -3,12 +3,11 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Arr;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Account>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AccountType>
  */
-class AccountFactory extends Factory
+class AccountTypeFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,7 +17,7 @@ class AccountFactory extends Factory
     public function definition()
     {
         return [
-			'account_type_id' => Arr::random([1, 2])
+            //
         ];
     }
 }

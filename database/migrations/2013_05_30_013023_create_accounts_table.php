@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
+			$table->foreignId('account_type_id')->constrained();
             $table->timestamps();
         });
     }

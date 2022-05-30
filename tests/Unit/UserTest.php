@@ -11,9 +11,7 @@ class UserTest extends TestCase
 {
 	use RefreshDatabase;
 
-	/**
-	 * @test
-	 */
+	/** @test */
     public function user_belongs_to_an_account()
     {
 		$user = User::factory()->create();
