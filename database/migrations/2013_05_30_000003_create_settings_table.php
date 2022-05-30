@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
-			$table->foreignId('settings_default_id')->constrained();
+			$table->foreignId('default_setting_id')->constrained();
 			$table->foreignId('account_id')->constrained();
 			$table->string('value');
             $table->timestamps();

@@ -13,7 +13,7 @@ return new class extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('settings_defaults', function (Blueprint $table) {
+		Schema::create('default_settings', function (Blueprint $table) {
 			$table->id();
 			$table->foreignId('account_type_id')->constrained();
 			$table->string('name');
@@ -41,12 +41,12 @@ return new class extends Migration {
 	 */
 	public function down()
 	{
-		Schema::dropIfExists('settings_defaults');
+		Schema::dropIfExists('default_settings');
 	}
 
 	protected function createTCSettingsDefaults()
 	{
-		DB::table('settings_defaults')
+		DB::table('default_settings')
 			->insert([
 				[
 					'account_type_id' => 1,
@@ -71,7 +71,7 @@ return new class extends Migration {
 
 	protected function createVendorSettingsDefaults()
 	{
-		DB::table('settings_defaults')
+		DB::table('default_settings')
 			->insert([
 				[
 					'account_type_id' => 2,

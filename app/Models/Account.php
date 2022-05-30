@@ -15,7 +15,7 @@ class Account extends Model
 
 		static::created(function ($model) {
 			$model->settings()->create([
-				'settings_default_id' => 1,
+				'default_setting_id' => 1,
 				'account_id' => $model->id,
 				'value' => 1
 			]);

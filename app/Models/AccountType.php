@@ -13,4 +13,9 @@ class AccountType extends Model
 	{
 		return $this->hasMany(Account::class);
 	}
+
+	public function defaultSettings()
+	{
+		return $this->hasMany(DefaultSetting::class);
+	}
 }
