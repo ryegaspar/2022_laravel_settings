@@ -19,16 +19,6 @@ return new class extends Migration
 			$table->string('type')->unique();
             $table->timestamps();
         });
-
-		DB::table('account_types')
-			->insert([
-				[
-					'type' => 'TC'
-				],
-				[
-					'type' => 'Vendor'
-				]
-			]);
     }
 
     /**
