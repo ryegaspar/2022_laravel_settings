@@ -2,12 +2,17 @@
 
 namespace Tests\Unit;
 
+use App\Models\Account;
+use App\Models\AccountType;
+use App\Models\DefaultSetting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class SettingTest extends TestCase
 {
 	use RefreshDatabase;
+
+	protected $managerLists = '[{"name":"joe"},{"name":"gabe"},{"name":"michael"},{"name":"natalie"}]';
 
 	/**
 	 * test tc account with default tc settings
@@ -28,7 +33,7 @@ class SettingTest extends TestCase
 		$this->assertDatabaseHas('settings', [
 			'default_setting_id' => 2,
 			'account_id'         => 1,
-			'value'              => '[{"name":"joe"},{"name":"gabe"},{"name":"michael"},{"name":"natalie"}]'
+			'value'              => $this->managerLists
 		]);
 		$this->assertDatabaseHas('settings', [
 			'default_setting_id' => 3,
@@ -43,7 +48,32 @@ class SettingTest extends TestCase
 		[$defaultSetting, $account] = $this->makeTcAccount();
 
 		$this->assertEquals(1, $account->settings->value('is_ach_enabled'));
+		$this->assertEquals($this->managerLists, $account->settings->value('managers'));
 		$this->assertEquals('FA', $account->settings->value('pay_processor'));
+
+		$tcAccountType = AccountType::find(1);
+		$newDefaultSetting = DefaultSetting::create([
+			'account_type_id' => $tcAccountType->id,
+			'name'            => 'title',
+			'type'            => 'string',
+			'default'         => 'random title',
+		]);
+
+		$newAccount = Account::factory()->create([
+			'account_type_id' => $tcAccountType->id
+		]);
+
+		$this->assertEquals('random title', $newAccount->settings->value('title'));
+	}
+
+	/** @test */
+	public function it_can_get_specific_setting_of_an_account_with_magic_get()
+	{
+		[$defaultSetting, $account] = $this->makeTcAccount();
+
+		$this->assertEquals(1, $account->settings->is_ach_enabled);
+		$this->assertEquals($this->managerLists, $account->settings->managers);
+		$this->assertEquals('FA', $account->settings->pay_processor);
 	}
 
 	/*
@@ -51,7 +81,7 @@ class SettingTest extends TestCase
 	 *
 	 * get methods
 	 * $account->settings->value('is_ach_enabled') ** done
-	 * $account->settings->is_ach_enabled
+	 * $account->settings->is_ach_enabled ** done
 	 * $account->settings->only(...)
 	 * $account->settings->except(...)
 	 *
