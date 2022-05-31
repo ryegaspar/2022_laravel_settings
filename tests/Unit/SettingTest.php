@@ -57,7 +57,7 @@ class SettingTest extends TestCase
 	 *
 	 * set methods
 	 * $account->settings->is_ach_enabled = false
-	 * $account->settings->set('is_ach_enabled' = false)
+	 * $account->settings->set('is_ach_enabled', false)
 	 * $account->settings->set(['is_ach_enabled' => false, 'pay_processor' => 'HL'])
 	 *
 	 * long set method
@@ -70,8 +70,8 @@ class SettingTest extends TestCase
 	 * $account->settings->setDefault('pay_processor')
 	 *
 	 * next steps:
-	 * setting types should be validated
-	 * re-sync settings when default settings changed (added / removed)
-	 * introduce caching, invalidate cache when updated (maybe??)
+	 * re-sync individual settings when default settings changed (added / removed)
+	 * implement and enforce setting types
+	 * introduce caching, invalidate cache when updated (maybe?, maybe use redis?)
 	 */
 }
