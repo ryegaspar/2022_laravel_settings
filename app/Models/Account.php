@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\HasSettings;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,8 +37,14 @@ class Account extends Model
 		return $this->hasMany(User::class);
 	}
 
-	public function settings()
+	public function settings(): HasSettings
 	{
-		return $this->hasMany(Setting::class);
+		$instance = $this->newRelatedInstance(Setting::class);
+		return new HasSettings(
+			$instance->newQuery(),
+			$this,
+			'settings.account_id',
+			'id'
+		);
 	}
 }

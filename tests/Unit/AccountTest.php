@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Models\Account;
 use App\Models\AccountType;
 use App\Models\User;
+use App\SettingsCollection;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -34,5 +35,14 @@ class AccountTest extends TestCase
 
 		$this->assertInstanceOf(Collection::class, $account->users);
 		$this->assertInstanceOf(User::class, $account->users[0]);
+	}
+
+	/** @test */
+	public function it_has_many_settings()
+	{
+		[$defaultSetting, $account] = $this->makeTcAccount();
+
+		$this->assertInstanceOf(SettingsCollection::class, $account->settings);
+		$this->assertEquals(3, $account->settings->count());
 	}
 }

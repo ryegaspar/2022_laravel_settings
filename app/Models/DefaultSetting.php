@@ -9,7 +9,7 @@ class DefaultSetting extends Model
 {
     use HasFactory;
 
-	public function AccountType()
+	public function accountType()
 	{
 		return $this->belongsTo(AccountType::class);
 	}
