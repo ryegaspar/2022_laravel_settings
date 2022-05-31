@@ -1,0 +1,73 @@
+version: '3.9'
+
+networks:
+    laravel-app:
+
+services:
+    site:
+        container_name: nginx
+        build:
+            context: .
+            dockerfile: .docker/nginx/dockerfile
+        ports:
+            - 8050:80
+        volumes:
+            - .:/var/www/html
+        depends_on:
+            - mysql
+            - php
+        networks:
+            - laravel-app
+    mysql:
+        container_name: mysql
+        image: mariadb:10.5
+        restart: unless-stopped
+        tty: true
+        ports:
+            - 3356:3306
+        environment:
+            MYSQL_DATABASE: laravel_db
+            MYSQL_ROOT_PASSWORD: secret
+        volumes:
+            - .docker/mysql-data:/var/lib/mysql
+        networks:
+            - laravel-app
+    php:
+        container_name: php
+        build:
+            context: .
+            dockerfile: .docker/php/dockerfile
+        restart: always
+        volumes:
+            - .:/var/www/html
+        ports:
+            - 9050:9000
+        networks:
+            - laravel-app
+    composer:
+        container_name: composer
+        build:
+            context: .
+            dockerfile: .docker/composer/dockerfile
+        volumes:
+            - .:/var/www/html
+        working_dir: /var/www/html
+        depends_on:
+            - php
+            - mysql
+        networks:
+            - laravel-app
+    artisan:
+        container_name: artisan
+        build:
+            context: .
+            dockerfile: .docker/php/dockerfile
+        volumes:
+            - .:/var/www/html
+        working_dir: /var/www/html
+        depends_on:
+            - php
+            - mysql
+        entrypoint: [ "php", "/var/www/html/artisan" ]
+        networks:
+            - laravel-app
