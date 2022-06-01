@@ -17,7 +17,12 @@ class DefaultSettingScope implements Scope
 				'settings.default_setting_id',
 				'default_settings.id'
 			)
-				->select('default_settings.name', 'default_settings.type', 'default_settings.default', 'settings.value');
+				->select('default_settings.name',
+					'default_settings.type',
+					'default_settings.default',
+					'settings.value',
+					'settings.id'
+				);
 		});
 	}
 }

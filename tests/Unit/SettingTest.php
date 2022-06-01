@@ -26,7 +26,7 @@ class SettingTest extends TestCase
 
 		[$defaultSetting] = $this->makeTcAccount();
 
-		$this->assertDatabaseCount('settings', $defaultSetting->count());
+		$this->assertDatabaseCount('settings', 3);
 		$this->assertDatabaseHas('settings', [
 			'default_setting_id' => 1,
 			'account_id'         => 1,
@@ -104,6 +104,17 @@ class SettingTest extends TestCase
 		$this->assertArrayHasKey('is_ach_enabled', $settingsCollection->toArray());
 		$this->assertArrayHasKey('pay_processor', $settingsCollection->toArray());
 		$settingsCollection->each(fn($setting) => $this->assertInstanceOf(Setting::class, $setting));
+	}
+
+	/** @test */
+	public function it_can_assign_a_setting_for_a_given_account_via_set_magic_method()
+	{
+		[$defaultSetting, $account] = $this->makeTcAccount();
+
+		$this->assertEquals('FA', $account->settings->pay_processor);
+
+		$account->settings->pay_processor = 'HL';
+		$this->assertEquals('HL', $account->fresh()->settings->pay_processor);
 	}
 
 	/*
