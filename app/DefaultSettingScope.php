@@ -11,7 +11,7 @@ class DefaultSettingScope implements Scope
 {
 	public function apply(Builder $builder, Model $model)
 	{
-		$builder->beforeQuery(function (QueryBuilder $builder) use ($model) {
+		$builder->beforeQuery(function (QueryBuilder $builder) {
 			$builder->join(
 				'default_settings',
 				'settings.default_setting_id',

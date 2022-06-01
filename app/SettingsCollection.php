@@ -4,6 +4,8 @@ namespace App;
 
 use App\Models\Setting;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Enumerable;
 use Illuminate\Support\Traits\EnumeratesValues;
 
 class SettingsCollection extends Collection
@@ -21,6 +23,27 @@ class SettingsCollection extends Collection
 		}
 
 		return $setting;
+	}
+
+	public function only($keys): Collection|SettingsCollection|static
+	{
+		if (is_null($keys)) {
+			return new static($this->items);
+		}
+
+		if ($keys instanceof Enumerable) {
+			$keys = $keys->all();
+		}
+
+		$keys = is_array($keys) ? $keys : func_get_args();
+
+		$settings = new static(Arr::only($this->items, Arr::wrap($keys)));
+
+		if ($settings->isNotEmpty()) {
+			return $settings;
+		}
+
+		return parent::only($keys);
 	}
 
 	public function __get($key)

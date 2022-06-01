@@ -5,6 +5,8 @@ namespace Tests\Unit;
 use App\Models\Account;
 use App\Models\AccountType;
 use App\Models\DefaultSetting;
+use App\Models\Setting;
+use App\SettingsCollection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -76,13 +78,27 @@ class SettingTest extends TestCase
 		$this->assertEquals('FA', $account->settings->pay_processor);
 	}
 
+	/** @test */
+	public function it_can_get_settings_of_an_account_specified_by_only_method()
+	{
+		[$defaultSetting, $account] = $this->makeTcAccount();
+
+		$settingsCollection = $account->settings->only('is_ach_enabled', 'pay_processor');
+
+		$this->assertInstanceOf(SettingsCollection::class, $settingsCollection);
+
+		$this->assertArrayHasKey('is_ach_enabled', $settingsCollection->toArray());
+		$this->assertArrayHasKey('pay_processor', $settingsCollection->toArray());
+		$settingsCollection->each(fn($setting) => $this->assertInstanceOf(Setting::class, $setting));
+	}
+
 	/*
 	 * TODO:
 	 *
 	 * get methods
 	 * $account->settings->value('is_ach_enabled') ** done
 	 * $account->settings->is_ach_enabled ** done
-	 * $account->settings->only(...)
+	 * $account->settings->only(...)** done
 	 * $account->settings->except(...)
 	 *
 	 * set methods
