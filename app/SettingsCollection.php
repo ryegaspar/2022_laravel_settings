@@ -54,6 +54,13 @@ class SettingsCollection extends Collection
 		]);
 	}
 
+	public function setDefault(string $key)
+	{
+		if ($this->get($key) instanceof Setting) {
+			$this->updateSetting($key,$this->get($key)->default);
+		}
+	}
+
 	public function set(string|array $name, mixed $value = null): void
 	{
 		if (is_array($name) && is_null($value)) {

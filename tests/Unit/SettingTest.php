@@ -151,6 +151,20 @@ class SettingTest extends TestCase
 		$this->assertEquals(0, $account->settings->is_ach_enabled);
 	}
 
+	/** @test */
+	public function it_can_reset_the_setting_back_to_its_default_value()
+	{
+		[$defaultSetting, $account] = $this->makeTcAccount();
+
+		$this->assertEquals('FA', $account->settings->pay_processor);
+
+		$account->settings->pay_processor = 'HL';
+		$this->assertEquals('HL', $account->fresh()->settings->pay_processor);
+
+		$account->settings->setDefault('pay_processor');
+		$this->assertEquals('FA', $account->fresh()->settings->pay_processor);
+	}
+
 	/*
 	 * TODO:
 	 *
@@ -164,11 +178,6 @@ class SettingTest extends TestCase
 	 * $account->settings->is_ach_enabled = false ** done
 	 * $account->settings->set('is_ach_enabled', false) ** done
 	 * $account->settings->set(['is_ach_enabled' => false, 'pay_processor' => 'HL']) ** done
-	 *
-	 * long set method
-	 * $ach = $account->settings->is_ach_enabled;
-	 * $ach = false
-	 * $ach->save()
 	 *
 	 * reset to default
 	 * $account->settings->get('pay_processor')->setDefault();
