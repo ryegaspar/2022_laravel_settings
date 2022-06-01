@@ -89,6 +89,7 @@ class SettingTest extends TestCase
 
 		$this->assertArrayHasKey('is_ach_enabled', $settingsCollection->toArray());
 		$this->assertArrayHasKey('pay_processor', $settingsCollection->toArray());
+		$this->assertArrayNotHasKey('managers', $settingsCollection->toArray());
 		$settingsCollection->each(fn($setting) => $this->assertInstanceOf(Setting::class, $setting));
 	}
 
@@ -103,7 +104,22 @@ class SettingTest extends TestCase
 
 		$this->assertArrayHasKey('is_ach_enabled', $settingsCollection->toArray());
 		$this->assertArrayHasKey('pay_processor', $settingsCollection->toArray());
+		$this->assertArrayNotHasKey('managers', $settingsCollection->toArray());
 		$settingsCollection->each(fn($setting) => $this->assertInstanceOf(Setting::class, $setting));
+	}
+
+	/** @test */
+	public function it_can_assign_a_setting_for_a_given_account()
+	{
+		[$defaultSetting, $account] = $this->makeTcAccount();
+
+		$this->assertEquals('FA', $account->settings->pay_processor);
+
+		$account->settings->set('pay_processor', 'HL');
+		$this->assertEquals('HL', $account->fresh()->settings->pay_processor);
+
+		[$defaultSetting, $newAccount] = $this->makeTcAccount();
+		$this->assertEquals('FA', $newAccount->settings->pay_processor);
 	}
 
 	/** @test */
@@ -127,8 +143,8 @@ class SettingTest extends TestCase
 	 * $account->settings->except(...)** done
 	 *
 	 * set methods
-	 * $account->settings->is_ach_enabled = false
-	 * $account->settings->set('is_ach_enabled', false)
+	 * $account->settings->is_ach_enabled = false ** done
+	 * $account->settings->set('is_ach_enabled', false) ** done
 	 * $account->settings->set(['is_ach_enabled' => false, 'pay_processor' => 'HL'])
 	 *
 	 * long set method
