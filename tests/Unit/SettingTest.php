@@ -133,6 +133,24 @@ class SettingTest extends TestCase
 		$this->assertEquals('HL', $account->fresh()->settings->pay_processor);
 	}
 
+	/** @test */
+	public function it_can_assign_multiple_values_to_a_setting_for_a_given_account()
+	{
+		[$defaultSetting, $account] = $this->makeTcAccount();
+
+		$this->assertEquals('FA', $account->settings->pay_processor);
+		$this->assertEquals(1, $account->settings->is_ach_enabled);
+
+		$account->settings->set([
+			'pay_processor' => 'HL',
+			'is_ach_enabled' => false
+		]);
+
+		$account = $account->fresh();
+		$this->assertEquals('HL', $account->settings->pay_processor);
+		$this->assertEquals(0, $account->settings->is_ach_enabled);
+	}
+
 	/*
 	 * TODO:
 	 *
@@ -145,7 +163,7 @@ class SettingTest extends TestCase
 	 * set methods
 	 * $account->settings->is_ach_enabled = false ** done
 	 * $account->settings->set('is_ach_enabled', false) ** done
-	 * $account->settings->set(['is_ach_enabled' => false, 'pay_processor' => 'HL'])
+	 * $account->settings->set(['is_ach_enabled' => false, 'pay_processor' => 'HL']) ** done
 	 *
 	 * long set method
 	 * $ach = $account->settings->is_ach_enabled;

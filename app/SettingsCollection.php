@@ -47,12 +47,26 @@ class SettingsCollection extends Collection
 		return new static(Arr::except($this->items, $keys));
 	}
 
-	public function set(string $name, mixed $value): void
+	public function updateSetting($key, $value): void
 	{
+		$this->get($key)->update([
+			'value' => $value
+		]);
+	}
+
+	public function set(string|array $name, mixed $value = null): void
+	{
+		if (is_array($name) && is_null($value)) {
+			foreach($name as $key => $setting) {
+				if ($this->get($key) instanceof Setting) {
+					$this->updateSetting($key, $setting);
+				}
+			}
+			return;
+		}
+
 		if ($this->get($name) instanceof Setting) {
-			$this->get($name)->update([
-				'value' => $value
-			]);
+			$this->updateSetting($name, $value);
 		}
 	}
 
