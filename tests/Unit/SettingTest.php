@@ -92,6 +92,20 @@ class SettingTest extends TestCase
 		$settingsCollection->each(fn($setting) => $this->assertInstanceOf(Setting::class, $setting));
 	}
 
+	/** @test */
+	public function it_can_exclude_settings_of_an_account_specified_by_except_method()
+	{
+		[$defaultSetting, $account] = $this->makeTcAccount();
+
+		$settingsCollection = $account->settings->except('managers');
+
+		$this->assertInstanceOf(SettingsCollection::class, $settingsCollection);
+
+		$this->assertArrayHasKey('is_ach_enabled', $settingsCollection->toArray());
+		$this->assertArrayHasKey('pay_processor', $settingsCollection->toArray());
+		$settingsCollection->each(fn($setting) => $this->assertInstanceOf(Setting::class, $setting));
+	}
+
 	/*
 	 * TODO:
 	 *
@@ -99,7 +113,7 @@ class SettingTest extends TestCase
 	 * $account->settings->value('is_ach_enabled') ** done
 	 * $account->settings->is_ach_enabled ** done
 	 * $account->settings->only(...)** done
-	 * $account->settings->except(...)
+	 * $account->settings->except(...)** done
 	 *
 	 * set methods
 	 * $account->settings->is_ach_enabled = false

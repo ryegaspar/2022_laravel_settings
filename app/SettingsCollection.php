@@ -31,19 +31,20 @@ class SettingsCollection extends Collection
 			return new static($this->items);
 		}
 
-		if ($keys instanceof Enumerable) {
-			$keys = $keys->all();
-		}
-
 		$keys = is_array($keys) ? $keys : func_get_args();
 
-		$settings = new static(Arr::only($this->items, Arr::wrap($keys)));
+		return new static(Arr::only($this->items, Arr::wrap($keys)));
+	}
 
-		if ($settings->isNotEmpty()) {
-			return $settings;
+	public function except($keys): static
+	{
+		if ($keys instanceof Enumerable) {
+			$keys = $keys->all();
+		} elseif (! is_array($keys)) {
+			$keys = func_get_args();
 		}
 
-		return parent::only($keys);
+		return new static(Arr::except($this->items, $keys));
 	}
 
 	public function __get($key)
