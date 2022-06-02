@@ -15,4 +15,9 @@ class DefaultSetting extends Model
 	{
 		return $this->belongsTo(AccountType::class);
 	}
+
+	public function settings()
+	{
+		return $this->hasMany(Setting::class);
+	}
 }

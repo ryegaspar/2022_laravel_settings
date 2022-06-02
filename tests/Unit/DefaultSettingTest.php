@@ -5,12 +5,15 @@ namespace Tests\Unit;
 use App\Models\Account;
 use App\Models\AccountType;
 use App\Models\DefaultSetting;
+use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class DefaultSettingTest extends TestCase
 {
 	use RefreshDatabase;
+
+	protected $managerLists = '[{"name":"joe"},{"name":"gabe"},{"name":"michael"},{"name":"natalie"}]';
 
 	/** @test */
     public function it_belongs_to_account_type()
@@ -19,6 +22,17 @@ class DefaultSettingTest extends TestCase
 
 		$this->assertInstanceOf(AccountType::class, $defaultSetting->accountType);
     }
+
+	/** @test */
+	public function it_has_many_settings()
+	{
+		$account = Account::factory()->create([
+			'account_type_id' => 1
+		]);
+
+		$defaultSetting = $account->accountType->defaultSettings->first();
+		$this->assertInstanceOf(Setting::class, $defaultSetting->settings[0]);
+	}
 
 	/** @test */
 	public function renaming_name_does_not_affect_individual_settings()
