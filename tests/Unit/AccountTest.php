@@ -40,7 +40,9 @@ class AccountTest extends TestCase
 	/** @test */
 	public function it_has_many_settings()
 	{
-		[$defaultSetting, $account] = $this->makeTcAccount();
+		$account = Account::factory()->create([
+			'account_type_id' => AccountType::find(1)->id
+		]);
 
 		$this->assertInstanceOf(SettingsCollection::class, $account->settings);
 		$this->assertEquals(3, $account->settings->count());

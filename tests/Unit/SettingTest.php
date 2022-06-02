@@ -47,7 +47,7 @@ class SettingTest extends TestCase
 	/** @test */
 	public function it_can_get_specific_setting_of_an_account()
 	{
-		[$defaultSetting, $account] = $this->makeTcAccount();
+		$account = $this->makeTcAccount();
 
 		$this->assertEquals(1, $account->settings->value('is_ach_enabled'));
 		$this->assertEquals($this->managerLists, $account->settings->value('managers'));
@@ -71,7 +71,7 @@ class SettingTest extends TestCase
 	/** @test */
 	public function it_can_get_specific_setting_of_an_account_with_magic_get()
 	{
-		[$defaultSetting, $account] = $this->makeTcAccount();
+		$account = $this->makeTcAccount();
 
 		$this->assertEquals(1, $account->settings->is_ach_enabled);
 		$this->assertEquals($this->managerLists, $account->settings->managers);
@@ -81,7 +81,7 @@ class SettingTest extends TestCase
 	/** @test */
 	public function it_can_get_settings_of_an_account_specified_by_only_method()
 	{
-		[$defaultSetting, $account] = $this->makeTcAccount();
+		$account = $this->makeTcAccount();
 
 		$settingsCollection = $account->settings->only('is_ach_enabled', 'pay_processor');
 
@@ -96,7 +96,7 @@ class SettingTest extends TestCase
 	/** @test */
 	public function it_can_exclude_settings_of_an_account_specified_by_except_method()
 	{
-		[$defaultSetting, $account] = $this->makeTcAccount();
+		$account = $this->makeTcAccount();
 
 		$settingsCollection = $account->settings->except('managers');
 
@@ -111,21 +111,30 @@ class SettingTest extends TestCase
 	/** @test */
 	public function it_can_assign_a_setting_for_a_given_account()
 	{
-		[$defaultSetting, $account] = $this->makeTcAccount();
+		$account = $this->makeTcAccount();
 
 		$this->assertEquals('FA', $account->settings->pay_processor);
 
 		$account->settings->set('pay_processor', 'HL');
 		$this->assertEquals('HL', $account->fresh()->settings->pay_processor);
 
-		[$defaultSetting, $newAccount] = $this->makeTcAccount();
+		$newAccount = $this->makeTcAccount();
 		$this->assertEquals('FA', $newAccount->settings->pay_processor);
+
+		$vendorAccount = Account::factory()->create([
+			'account_type_id' => AccountType::find(2)->id
+		]);
+
+		$this->assertEquals('nike', $vendorAccount->settings->brand);
+
+		$vendorAccount->settings->set('brand', 'adidas');
+		$this->assertEquals('adidas', $vendorAccount->fresh()->settings->brand);
 	}
 
 	/** @test */
 	public function it_can_assign_a_setting_for_a_given_account_via_set_magic_method()
 	{
-		[$defaultSetting, $account] = $this->makeTcAccount();
+		$account = $this->makeTcAccount();
 
 		$this->assertEquals('FA', $account->settings->pay_processor);
 
@@ -136,7 +145,7 @@ class SettingTest extends TestCase
 	/** @test */
 	public function it_can_assign_multiple_values_to_a_setting_for_a_given_account()
 	{
-		[$defaultSetting, $account] = $this->makeTcAccount();
+		$account = $this->makeTcAccount();
 
 		$this->assertEquals('FA', $account->settings->pay_processor);
 		$this->assertEquals(1, $account->settings->is_ach_enabled);
@@ -154,7 +163,7 @@ class SettingTest extends TestCase
 	/** @test */
 	public function it_can_reset_the_setting_back_to_its_default_value()
 	{
-		[$defaultSetting, $account] = $this->makeTcAccount();
+		$account = $this->makeTcAccount();
 
 		$this->assertEquals('FA', $account->settings->pay_processor);
 
@@ -165,6 +174,12 @@ class SettingTest extends TestCase
 		$this->assertEquals('FA', $account->fresh()->settings->pay_processor);
 	}
 
+	protected function makeTcAccount(): Account
+	{
+		return Account::factory()->create([
+				'account_type_id' => AccountType::find(1)->id
+			]);
+	}
 	/*
 	 * TODO:
 	 *
@@ -181,7 +196,7 @@ class SettingTest extends TestCase
 	 *
 	 * reset to default
 	 * $account->settings->get('pay_processor')->setDefault();
-	 * $account->settings->setDefault('pay_processor')
+	 * $account->settings->setDefault('pay_processor') ** done
 	 *
 	 * next steps:
 	 * re-sync individual settings when default settings changed (added / removed)
