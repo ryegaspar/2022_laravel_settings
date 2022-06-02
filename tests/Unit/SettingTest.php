@@ -5,8 +5,6 @@ namespace Tests\Unit;
 use App\Models\Account;
 use App\Models\AccountType;
 use App\Models\DefaultSetting;
-use App\Models\Setting;
-use App\SettingsCollection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -24,7 +22,7 @@ class SettingTest extends TestCase
 	{
 		$this->assertDatabaseCount('settings', 0);
 
-		[$defaultSetting] = $this->makeTcAccount();
+		$this->makeTcAccount();
 
 		$this->assertDatabaseCount('settings', 3);
 		$this->assertDatabaseHas('settings', [
@@ -69,46 +67,6 @@ class SettingTest extends TestCase
 	}
 
 	/** @test */
-	public function it_can_get_specific_setting_of_an_account_with_magic_get()
-	{
-		$account = $this->makeTcAccount();
-
-		$this->assertEquals(1, $account->settings->is_ach_enabled);
-		$this->assertEquals($this->managerLists, $account->settings->managers);
-		$this->assertEquals('FA', $account->settings->pay_processor);
-	}
-
-	/** @test */
-	public function it_can_get_settings_of_an_account_specified_by_only_method()
-	{
-		$account = $this->makeTcAccount();
-
-		$settingsCollection = $account->settings->only('is_ach_enabled', 'pay_processor');
-
-		$this->assertInstanceOf(SettingsCollection::class, $settingsCollection);
-
-		$this->assertArrayHasKey('is_ach_enabled', $settingsCollection->toArray());
-		$this->assertArrayHasKey('pay_processor', $settingsCollection->toArray());
-		$this->assertArrayNotHasKey('managers', $settingsCollection->toArray());
-		$settingsCollection->each(fn($setting) => $this->assertInstanceOf(Setting::class, $setting));
-	}
-
-	/** @test */
-	public function it_can_exclude_settings_of_an_account_specified_by_except_method()
-	{
-		$account = $this->makeTcAccount();
-
-		$settingsCollection = $account->settings->except('managers');
-
-		$this->assertInstanceOf(SettingsCollection::class, $settingsCollection);
-
-		$this->assertArrayHasKey('is_ach_enabled', $settingsCollection->toArray());
-		$this->assertArrayHasKey('pay_processor', $settingsCollection->toArray());
-		$this->assertArrayNotHasKey('managers', $settingsCollection->toArray());
-		$settingsCollection->each(fn($setting) => $this->assertInstanceOf(Setting::class, $setting));
-	}
-
-	/** @test */
 	public function it_can_assign_a_setting_for_a_given_account()
 	{
 		$account = $this->makeTcAccount();
@@ -129,49 +87,6 @@ class SettingTest extends TestCase
 
 		$vendorAccount->settings->set('brand', 'adidas');
 		$this->assertEquals('adidas', $vendorAccount->fresh()->settings->brand);
-	}
-
-	/** @test */
-	public function it_can_assign_a_setting_for_a_given_account_via_set_magic_method()
-	{
-		$account = $this->makeTcAccount();
-
-		$this->assertEquals('FA', $account->settings->pay_processor);
-
-		$account->settings->pay_processor = 'HL';
-		$this->assertEquals('HL', $account->fresh()->settings->pay_processor);
-	}
-
-	/** @test */
-	public function it_can_assign_multiple_values_to_a_setting_for_a_given_account()
-	{
-		$account = $this->makeTcAccount();
-
-		$this->assertEquals('FA', $account->settings->pay_processor);
-		$this->assertEquals(1, $account->settings->is_ach_enabled);
-
-		$account->settings->set([
-			'pay_processor' => 'HL',
-			'is_ach_enabled' => false
-		]);
-
-		$account = $account->fresh();
-		$this->assertEquals('HL', $account->settings->pay_processor);
-		$this->assertEquals(0, $account->settings->is_ach_enabled);
-	}
-
-	/** @test */
-	public function it_can_reset_the_setting_back_to_its_default_value()
-	{
-		$account = $this->makeTcAccount();
-
-		$this->assertEquals('FA', $account->settings->pay_processor);
-
-		$account->settings->pay_processor = 'HL';
-		$this->assertEquals('HL', $account->fresh()->settings->pay_processor);
-
-		$account->settings->setDefault('pay_processor');
-		$this->assertEquals('FA', $account->fresh()->settings->pay_processor);
 	}
 
 	protected function makeTcAccount(): Account
