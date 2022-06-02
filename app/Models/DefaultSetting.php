@@ -11,6 +11,22 @@ class DefaultSetting extends Model
 
 	protected $guarded = [];
 
+	protected static function boot()
+	{
+		parent::boot();
+
+		static::created(function ($model) {
+			$model->accountType
+				->accounts
+				->each(fn($account) => $account->settings()
+					->create([
+						'default_setting_id' => $model->id,
+						'value' => $model->default
+					])
+				);
+		});
+	}
+
 	public function accountType()
 	{
 		return $this->belongsTo(AccountType::class);
